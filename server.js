@@ -43,7 +43,7 @@ function getEnvConnectionOptions() {
   }
 }
 
-async function connectToSnowflakeFromEnv() {
+async function connectToSnowflakeFromEnv(connectionName = 'default') {
   const connection = snowflake.createConnection(getEnvConnectionOptions());
   await new Promise((resolve, reject) => {
     connection.connect((err, conn) => {
@@ -199,7 +199,7 @@ async function connectToSnowflakeFromConfig(connectionName = 'default') {
 
 async function connectToSnowflake(connectionName = 'default') {
   if (isRunningInSnowflakeContainer()) {
-    return await connectToSnowflakeFromEnv();
+    return await connectToSnowflakeFromEnv(connectionName);
   } else {
     return await connectToSnowflakeFromConfig(connectionName);
   }
@@ -229,7 +229,7 @@ app.get('/api/dashboard/overview', async (req, res) => {
     let connection;
     try {
         console.log('📊 Loading dashboard overview from database...');
-        connection = await connectToSnowflake();
+        connection = await connectToSnowflake('default');
         
         // Query database for overview metrics
         const overviewQuery = `
@@ -272,7 +272,7 @@ app.get('/api/providers', async (req, res) => {
     let connection;
     try {
         console.log('👥 Loading providers from database...');
-        connection = await connectToSnowflake();
+        connection = await connectToSnowflake('default');
         
         const providersQuery = `
             SELECT provider_id, name, industry, country, tier, total_revenue, 
@@ -318,7 +318,7 @@ app.get('/api/consumers', async (req, res) => {
     let connection;
     try {
         console.log('👥 Loading consumers from database...');
-        connection = await connectToSnowflake();
+        connection = await connectToSnowflake('default');
         
         const consumersQuery = `
             SELECT consumer_id, name, industry, country, size, total_spend,
@@ -364,7 +364,7 @@ app.get('/api/apps', async (req, res) => {
     let connection;
     try {
         console.log('📱 Loading native apps from database...');
-        connection = await connectToSnowflake();
+        connection = await connectToSnowflake('default');
         
         const appsQuery = `
             SELECT app_id, name, provider_name, category, pricing_model,
@@ -409,7 +409,7 @@ app.get('/api/revenue', async (req, res) => {
     let connection;
     try {
         console.log('💰 Loading revenue analytics from database...');
-        connection = await connectToSnowflake();
+        connection = await connectToSnowflake('default');
         
         const revenueQuery = `
             SELECT DATE_TRUNC('month', transaction_date) as month, SUM(amount) as revenue
@@ -469,11 +469,4 @@ app.get('*', (req, res) => {
 app.listen(PORT, () => {
   console.log(`🚀 Server running on http://${HOST}:${PORT}`);
   console.log(`📡 Health check: http://${HOST}:${PORT}/api/health`);
-  
-  const isInContainer = fs.existsSync('/snowflake/session/token');
-  if (isInContainer) {
-    console.log('🐳 Running in SPCS container - OAuth authentication enabled');
-  } else {
-    console.log('🖥️  Running locally - config-based authentication');
-  }
 });
