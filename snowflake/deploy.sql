@@ -37,9 +37,6 @@ CREATE SERVICE IF NOT EXISTS NATIVE_APPS_ANALYTICS_SERVICE
       - name: analytics-dashboard
         port: 3002
         public: true
-    capabilities:
-      securityContext:
-        executeAsCaller: true
   $$
   COMMENT = 'Snowflake Native Apps Business Analytics Platform';
 
