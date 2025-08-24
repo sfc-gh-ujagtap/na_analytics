@@ -30,9 +30,8 @@ spcs_template_cursor/
 │   └── setup_database.sql   # Database and schema setup
 └── snowflake/               # SPCS deployment files
 
-    ├── deploy.sql           # Service deployment
-    ├── manage_service.sql   # Service management commands
-    └── service_spec.yaml    # SPCS service specification
+    ├── deploy.sql           # Service deployment (includes embedded spec)
+    └── manage_service.sql   # Service management commands
 ```
 
 ## 🚀 Quick Start
@@ -96,7 +95,7 @@ The application automatically detects whether it's running in SPCS or locally:
 
 1. **Database/Schema names**: Update in `scripts/setup_database.sql` and `snowflake/deploy.sql`
 2. **Application name**: Update in `package.json` and `deploy.sh`
-3. **Container image**: Update in `snowflake/service_spec.yaml` and `snowflake/deploy.sql`
+3. **Container image**: Update in `snowflake/deploy.sql`
 
 ## 🚀 SPCS Deployment
 
