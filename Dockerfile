@@ -12,11 +12,10 @@ COPY package*.json ./
 # Install dependencies with legacy peer deps flag
 RUN npm ci --legacy-peer-deps
 
-# Copy source code
-COPY . .
-
-# Build the React application
-RUN npm run build
+# Copy source code (excluding problematic dependencies)
+COPY server.js ./
+COPY build ./build/
+COPY src/data ./src/data/
 
 # Production stage - Create lightweight production image
 FROM node:18-alpine AS production
@@ -33,9 +32,10 @@ WORKDIR /app
 COPY --from=builder --chown=nodejs:nodejs /app/package*.json ./
 RUN npm ci --only=production --legacy-peer-deps && npm cache clean --force
 
-# Copy server file and built React application
+# Copy server file and pre-built dashboard
 COPY --from=builder --chown=nodejs:nodejs /app/server.js ./
 COPY --from=builder --chown=nodejs:nodejs /app/build ./build/
+COPY --from=builder --chown=nodejs:nodejs /app/src ./src/
 
 # Switch to non-root user
 USER nodejs

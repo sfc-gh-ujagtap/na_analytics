@@ -1,18 +1,18 @@
-# SPCS Service Specification Template
-# Update the values below for your specific application
+# Snowflake Native Apps Business Analytics Platform
+# SPCS Service Specification
 
 spec:
   container:
-  - name: spcs-app-template
-    image: /SPCS_APP_DB/IMAGE_SCHEMA/IMAGE_REPO/spcs-app-template:latest
+  - name: native-apps-analytics
+    image: /NATIVE_APPS_ANALYTICS_DB/IMAGE_SCHEMA/IMAGE_REPO/native-apps-analytics:latest
     env:
       SERVER_PORT: 3002
       NODE_ENV: production
-      SNOWFLAKE_DATABASE: SPCS_APP_DB
-      SNOWFLAKE_SCHEMA: APP_SCHEMA
+      SNOWFLAKE_DATABASE: NATIVE_APPS_ANALYTICS_DB
+      SNOWFLAKE_SCHEMA: ANALYTICS_SCHEMA
       SNOWFLAKE_WAREHOUSE: COMPUTE_WH
-      SNOWFLAKE_ROLE: APP_SPCS_ROLE
+      SNOWFLAKE_ROLE: NATIVE_APPS_ANALYTICS_ROLE
   endpoint:
-  - name: app-endpoint
+  - name: analytics-dashboard
     port: 3002
     public: true

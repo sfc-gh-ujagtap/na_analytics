@@ -5,7 +5,7 @@ yarn-debug.log*
 yarn-error.log*
 
 # Production build (will be created during build)
-build
+# build  # Commented out - we need our pre-built dashboard files
 
 # Development files
 .git
