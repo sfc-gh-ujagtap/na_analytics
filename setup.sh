@@ -15,4 +15,7 @@ snowsql -c default -f scripts/setup_database.sql
 echo "Step 4: Inserting sample data"
 snowsql -c default -f scripts/insert_sample_data.sql
 
+echo "Step 5: Setting up image repository"
+snowsql -c default -f snowflake/setup_image_repo.sql
+
 echo "Setup complete! Database and roles are ready."
