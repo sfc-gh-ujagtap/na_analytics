@@ -17,7 +17,7 @@ USE SCHEMA IMAGE_SCHEMA;
 CREATE IMAGE REPOSITORY IF NOT EXISTS IMAGE_REPO
 COMMENT = 'Repository for Native Apps Analytics container images';
 
--- Show the repository URL for buildAndUpload.sh script
+-- Show the repository URL for deployment script
 SHOW IMAGE REPOSITORIES;
 DESCRIBE IMAGE REPOSITORY IMAGE_REPO;
 

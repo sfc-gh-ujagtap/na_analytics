@@ -29,7 +29,7 @@ spcs_template_cursor/
 │   ├── create_app_role.sql  # Application role creation
 │   └── setup_database.sql   # Database and schema setup
 └── snowflake/               # SPCS deployment files
-    ├── buildAndUpload.sh    # Build and upload script
+
     ├── deploy.sql           # Service deployment
     ├── manage_service.sql   # Service management commands
     └── service_spec.yaml    # SPCS service specification
@@ -45,7 +45,7 @@ cp -r spcs_template_cursor my-new-app
 cd my-new-app
 
 # Update project name in package.json
-# Update APP_NAME in snowflake/buildAndUpload.sh
+# Update APP_NAME in deploy.sh
 ```
 
 ### 2. Install Dependencies
@@ -95,7 +95,7 @@ The application automatically detects whether it's running in SPCS or locally:
 ### Updating Configuration
 
 1. **Database/Schema names**: Update in `scripts/setup_database.sql` and `snowflake/deploy.sql`
-2. **Application name**: Update in `package.json` and `snowflake/buildAndUpload.sh`
+2. **Application name**: Update in `package.json` and `deploy.sh`
 3. **Container image**: Update in `snowflake/service_spec.yaml` and `snowflake/deploy.sql`
 
 ## 🚀 SPCS Deployment
@@ -142,7 +142,7 @@ snowsql -f scripts/setup_database.sql
 snowsql -f snowflake/setup_image_repo.sql
 
 # 4. Build and upload container image
-cd snowflake && ./buildAndUpload.sh
+./deploy.sh
 
 # 5. Deploy service
 snowsql -f snowflake/deploy.sql
