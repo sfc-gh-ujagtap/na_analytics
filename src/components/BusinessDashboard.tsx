@@ -102,21 +102,27 @@ const BusinessDashboard: React.FC = () => {
     try {
       setLoading(true);
       
-      // Fetch dashboard overview
-      const [overviewRes, providersRes, consumersRes, appsRes] = await Promise.all([
+      // Fetch dashboard overview and revenue data
+      const [overviewRes, providersRes, consumersRes, appsRes, revenueRes] = await Promise.all([
         fetch('/api/dashboard/overview'),
         fetch('/api/providers?limit=10'),
         fetch('/api/consumers?limit=10'),
-        fetch('/api/apps?limit=10')
+        fetch('/api/apps?limit=10'),
+        fetch('/api/revenue')
       ]);
 
       const overview = await overviewRes.json();
       const providers = await providersRes.json();
       const consumers = await consumersRes.json();
       const apps = await appsRes.json();
+      const revenue = await revenueRes.json();
 
-      if (overview.success) {
-        setDashboardData(overview.data);
+      if (overview.success && revenue.success) {
+        setDashboardData({
+          ...overview.data,
+          monthlyRevenue: revenue.data.monthlyRevenue,
+          lastUpdated: new Date().toISOString()
+        });
       }
       
       if (providers.success) {
