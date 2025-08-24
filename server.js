@@ -19,16 +19,17 @@ function getSnowflakeConfig() {
     
     if (isInContainer) {
         console.log('🐳 Running in SPCS container - using OAuth token');
+        const account = process.env.SNOWFLAKE_ACCOUNT;
         return {
-            account: process.env.SNOWFLAKE_ACCOUNT || 'your-account',
-            username: process.env.SNOWFLAKE_USERNAME || 'your-username',
-            role: process.env.SNOWFLAKE_ROLE || 'APP_SPCS_ROLE',
-            warehouse: process.env.SNOWFLAKE_WAREHOUSE || 'COMPUTE_WH',
-            database: process.env.SNOWFLAKE_DATABASE || 'SPCS_APP_DB',
-            schema: process.env.SNOWFLAKE_SCHEMA || 'APP_SCHEMA',
+            account,
+            username: process.env.SNOWFLAKE_USERNAME,
+            role: process.env.SNOWFLAKE_ROLE,
+            warehouse: process.env.SNOWFLAKE_WAREHOUSE,
+            database: process.env.SNOWFLAKE_DATABASE,
+            schema: process.env.SNOWFLAKE_SCHEMA,
             authenticator: 'OAUTH',
             token: fs.readFileSync('/snowflake/session/token', 'ascii'),
-            accessUrl: `https://app-${process.env.SNOWFLAKE_ACCOUNT}.snowflakecomputing.com`
+            accessUrl: `https://${account}.snowflakecomputing.com`
         };
     } else {
         console.log('🖥️  Running locally - using config from ~/.snowsql/config');
@@ -43,10 +44,10 @@ function getSnowflakeConfig() {
                 account: connection.account || process.env.SNOWFLAKE_ACCOUNT,
                 username: connection.user || connection.username || process.env.SNOWFLAKE_USERNAME,
                 password: connection.password || process.env.SNOWFLAKE_PASSWORD,
-                role: connection.role || process.env.SNOWFLAKE_ROLE || 'ACCOUNTADMIN',
-                warehouse: connection.warehouse || process.env.SNOWFLAKE_WAREHOUSE || 'COMPUTE_WH',
-                database: process.env.SNOWFLAKE_DATABASE || 'NATIVE_APPS_ANALYTICS_DB',
-                schema: process.env.SNOWFLAKE_SCHEMA || 'ANALYTICS_SCHEMA'
+                role: connection.role || process.env.SNOWFLAKE_ROLE,
+                warehouse: connection.warehouse || process.env.SNOWFLAKE_WAREHOUSE,
+                database: process.env.SNOWFLAKE_DATABASE,
+                schema: process.env.SNOWFLAKE_SCHEMA
             };
         } else {
             console.log('⚠️  No snowsql config found, using environment variables');
@@ -54,10 +55,10 @@ function getSnowflakeConfig() {
                 account: process.env.SNOWFLAKE_ACCOUNT,
                 username: process.env.SNOWFLAKE_USERNAME,
                 password: process.env.SNOWFLAKE_PASSWORD,
-                role: process.env.SNOWFLAKE_ROLE || 'APP_SPCS_ROLE',
-                warehouse: process.env.SNOWFLAKE_WAREHOUSE || 'COMPUTE_WH',
-                database: process.env.SNOWFLAKE_DATABASE || 'SPCS_APP_DB',
-                schema: process.env.SNOWFLAKE_SCHEMA || 'APP_SCHEMA'
+                role: process.env.SNOWFLAKE_ROLE,
+                warehouse: process.env.SNOWFLAKE_WAREHOUSE,
+                database: process.env.SNOWFLAKE_DATABASE,
+                schema: process.env.SNOWFLAKE_SCHEMA
             };
         }
     }

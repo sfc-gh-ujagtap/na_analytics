@@ -113,6 +113,25 @@ The application automatically detects whether it's running in SPCS or locally:
 ### Deployment Steps
 
 ```bash
+# Single command deployment (handles everything):
+./deploy.sh
+
+# Or run setup and deployment separately:
+./setup.sh        # Creates roles, database, sample data (fixes SPCS access issues)
+# Then build and deploy separately if needed
+```
+
+### 🔧 SPCS Data Access Issues - FIXED!
+
+The following critical issues have been resolved:
+- ✅ **Role Assignment**: `NATIVE_APPS_ANALYTICS_ROLE` now properly granted to user
+- ✅ **Database Ownership**: Database now owned by correct role, not ACCOUNTADMIN  
+- ✅ **SPCS Account Config**: Added missing `SNOWFLAKE_ACCOUNT` environment variable
+- ✅ **Setup Order**: Correct sequence ensures clean role-based ownership
+
+### Legacy Manual Steps (if needed)
+
+```bash
 # 1. Create application role (run once per account)
 snowsql -f scripts/create_app_role.sql
 
