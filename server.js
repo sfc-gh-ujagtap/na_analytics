@@ -41,12 +41,12 @@ function getSnowflakeConfig() {
             
             return {
                 account: connection.account || process.env.SNOWFLAKE_ACCOUNT,
-                username: connection.username || process.env.SNOWFLAKE_USERNAME,
+                username: connection.user || connection.username || process.env.SNOWFLAKE_USERNAME,
                 password: connection.password || process.env.SNOWFLAKE_PASSWORD,
-                role: process.env.SNOWFLAKE_ROLE || 'APP_SPCS_ROLE',
+                role: connection.role || process.env.SNOWFLAKE_ROLE || 'ACCOUNTADMIN',
                 warehouse: connection.warehouse || process.env.SNOWFLAKE_WAREHOUSE || 'COMPUTE_WH',
-                database: process.env.SNOWFLAKE_DATABASE || 'SPCS_APP_DB',
-                schema: process.env.SNOWFLAKE_SCHEMA || 'APP_SCHEMA'
+                database: process.env.SNOWFLAKE_DATABASE || 'NATIVE_APPS_ANALYTICS_DB',
+                schema: process.env.SNOWFLAKE_SCHEMA || 'ANALYTICS_SCHEMA'
             };
         } else {
             console.log('⚠️  No snowsql config found, using environment variables');
@@ -69,12 +69,22 @@ async function connectToSnowflake() {
     const connection = snowflake.createConnection(config);
     
     return new Promise((resolve, reject) => {
-        connection.connect((err, conn) => {
+        connection.connect(async (err, conn) => {
             if (err) {
                 console.error('❌ Failed to connect to Snowflake:', err);
                 reject(err);
             } else {
                 console.log('✅ Successfully connected to Snowflake');
+                
+                // Set warehouse context
+                try {
+                    await executeQuery(connection, `USE WAREHOUSE ${config.warehouse}`);
+                    await executeQuery(connection, `USE DATABASE ${config.database}`);
+                    await executeQuery(connection, `USE SCHEMA ${config.schema}`);
+                } catch (contextErr) {
+                    console.log('⚠️ Warning: Could not set context:', contextErr.message);
+                }
+                
                 resolve(connection);
             }
         });
@@ -125,7 +135,6 @@ app.get('/api/dashboard/overview', async (req, res) => {
         
         // Query database for overview metrics
         const overviewQuery = `
-            USE WAREHOUSE ${getSnowflakeConfig().warehouse};
             SELECT 
                 (SELECT SUM(total_revenue) FROM NATIVE_APPS_ANALYTICS_DB.ANALYTICS_SCHEMA.PROVIDERS) as total_revenue,
                 (SELECT COUNT(*) FROM NATIVE_APPS_ANALYTICS_DB.ANALYTICS_SCHEMA.PROVIDERS) as total_providers,
@@ -202,7 +211,6 @@ app.get('/api/providers', async (req, res) => {
         
         const sortColumn = sortBy === 'totalRevenue' ? 'total_revenue' : sortBy;
         const providersQuery = `
-            USE WAREHOUSE ${getSnowflakeConfig().warehouse};
             SELECT provider_id, name, industry, country, tier, total_revenue,
                    monthly_growth, app_count, consumer_count, avg_app_rating, status
             FROM NATIVE_APPS_ANALYTICS_DB.ANALYTICS_SCHEMA.PROVIDERS
@@ -257,7 +265,6 @@ app.get('/api/consumers', async (req, res) => {
         
         const sortColumn = sortBy === 'totalSpend' ? 'total_spend' : sortBy;
         const consumersQuery = `
-            USE WAREHOUSE ${getSnowflakeConfig().warehouse};
             SELECT consumer_id, name, industry, country, size, total_spend,
                    monthly_spend, installed_apps, satisfaction_score, status, contract_type
             FROM NATIVE_APPS_ANALYTICS_DB.ANALYTICS_SCHEMA.CONSUMERS
@@ -320,7 +327,6 @@ app.get('/api/apps', async (req, res) => {
         
         const sortColumn = sortBy === 'monthlyRevenue' ? 'monthly_revenue' : sortBy;
         const appsQuery = `
-            USE WAREHOUSE ${getSnowflakeConfig().warehouse};
             SELECT app_id, name, provider_name, category, pricing_model,
                    monthly_revenue, installations, rating, growth_rate, status
             FROM NATIVE_APPS_ANALYTICS_DB.ANALYTICS_SCHEMA.NATIVE_APPS
@@ -398,7 +404,6 @@ app.get('/api/analytics/revenue', async (req, res) => {
         }
         
         const revenueQuery = `
-            USE WAREHOUSE ${getSnowflakeConfig().warehouse};
             SELECT ${dateFormat} as period, 
                    SUM(amount) as revenue, 
                    COUNT(*) as transactions
@@ -458,7 +463,6 @@ app.get('/api/pipeline', async (req, res) => {
         // For now, return a basic response since pipeline opportunities table may not be fully set up
         // This would need to be implemented based on your actual pipeline data structure
         const pipelineQuery = `
-            USE WAREHOUSE ${getSnowflakeConfig().warehouse};
             SELECT 'lead' as stage, COUNT(*) as count, SUM(25000) as value FROM NATIVE_APPS_ANALYTICS_DB.ANALYTICS_SCHEMA.PROVIDERS ${whereClause};
         `;
         
@@ -517,7 +521,6 @@ app.get('/api/provider/:id', async (req, res) => {
         
         // Get provider details
         const providerQuery = `
-            USE WAREHOUSE ${getSnowflakeConfig().warehouse};
             SELECT provider_id, name, industry, country, tier, total_revenue,
                    monthly_growth, app_count, consumer_count, avg_app_rating, status
             FROM NATIVE_APPS_ANALYTICS_DB.ANALYTICS_SCHEMA.PROVIDERS
@@ -619,7 +622,6 @@ app.get('/api/consumer/:id', async (req, res) => {
         
         // Get consumer details
         const consumerQuery = `
-            USE WAREHOUSE ${getSnowflakeConfig().warehouse};
             SELECT consumer_id, name, industry, country, size, total_spend,
                    monthly_spend, installed_apps, satisfaction_score, status, contract_type
             FROM NATIVE_APPS_ANALYTICS_DB.ANALYTICS_SCHEMA.CONSUMERS
@@ -716,7 +718,6 @@ app.get('/api/data', async (req, res) => {
         
         // Sample query - replace with your actual data query
         const query = `
-            USE WAREHOUSE ${getSnowflakeConfig().warehouse};
             SELECT CURRENT_TIMESTAMP() as timestamp, 
                    CURRENT_USER() as user, 
                    CURRENT_ROLE() as role;
