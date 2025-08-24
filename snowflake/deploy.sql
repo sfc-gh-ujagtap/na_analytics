@@ -28,10 +28,6 @@ CREATE SERVICE IF NOT EXISTS NATIVE_APPS_ANALYTICS_SERVICE
         image: "pm-nax-consumer.registry.snowflakecomputing.com/native_apps_analytics_db/image_schema/image_repo/native-apps-analytics:latest"
         env:
           PORT: "3002"
-          NODE_ENV: production
-          SNOWFLAKE_ACCOUNT: "PM-NAX_CONSUMER"
-          SNOWFLAKE_DATABASE: NATIVE_APPS_ANALYTICS_DB
-          SNOWFLAKE_SCHEMA: ANALYTICS_SCHEMA
           SNOWFLAKE_WAREHOUSE: COMPUTE_WH
           SNOWFLAKE_ROLE: NATIVE_APPS_ANALYTICS_ROLE
         readinessProbe:
@@ -41,6 +37,9 @@ CREATE SERVICE IF NOT EXISTS NATIVE_APPS_ANALYTICS_SERVICE
       - name: analytics-dashboard
         port: 3002
         public: true
+    capabilities:
+      securityContext:
+        executeAsCaller: true
   $$
   COMMENT = 'Snowflake Native Apps Business Analytics Platform';
 
