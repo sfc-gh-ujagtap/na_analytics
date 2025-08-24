@@ -27,7 +27,7 @@ CREATE SERVICE IF NOT EXISTS NATIVE_APPS_ANALYTICS_SERVICE
       - name: native-apps-analytics
         image: "pm-nax-consumer.registry.snowflakecomputing.com/native_apps_analytics_db/image_schema/image_repo/native-apps-analytics:latest"
         env:
-          SERVER_PORT: "3002"
+          PORT: "3002"
           NODE_ENV: production
           SNOWFLAKE_ACCOUNT: "PM-NAX_CONSUMER"
           SNOWFLAKE_DATABASE: NATIVE_APPS_ANALYTICS_DB
