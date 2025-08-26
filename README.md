@@ -1,50 +1,62 @@
-# 🚀 SPCS Application Template
+# 📊 Native Apps Analytics Platform
 
-A comprehensive template for building React + Express.js applications deployable to Snowflake's Snowpark Container Services (SPCS).
+A comprehensive business intelligence dashboard for Snowflake Native Apps marketplace analytics, featuring executive-level visualizations and strategic insights. Built with React + Express.js and deployable to Snowflake's Snowpark Container Services (SPCS).
 
 ## 🏗️ Architecture
 
-This template follows the proven **flat project structure** pattern with:
-- **Single `package.json`** at root level
-- **Express server** that serves both API routes AND static React build files  
-- **Port 3002** consistently across all environments
-- **Per-request Snowflake connections** to prevent timeouts
-- **Dual authentication** (SPCS OAuth + local development)
+This Native Apps Analytics Platform features:
+- **Executive Dashboard** with multi-tab business intelligence interface
+- **Enhanced Provider Analytics** with streamlined tables and actionable insights
+- **Strategic APIs** for market intelligence, customer analytics, and revenue trends
+- **Real-time Data** from comprehensive Snowflake Native Apps marketplace simulation
+- **SPCS-Optimized** deployment with OAuth authentication and scalable architecture
+
+### Key Features
+- 📊 **Top Providers by Revenue** - Streamlined table without rating/category clutter
+- 🏭 **Industry Performance Heatmap** - Market opportunities by sector  
+- 🌍 **Geographic Revenue Distribution** - Regional market intelligence
+- 🎯 **Multi-dimensional Sector Analysis** - Comprehensive industry insights
+- 💰 **Multi-month Revenue Trends** - Historical transaction analysis
 
 ## 📁 Project Structure
 
 ```
-spcs_template_cursor/
-├── .cursorrules              # Cursor AI configuration with SPCS best practices
-├── package.json              # Dependencies and scripts
-├── server.js                 # Express server with SPCS patterns
-├── tsconfig.json            # TypeScript configuration
-├── Dockerfile               # Multi-stage Docker build
-├── src/                     # React application source
-│   ├── App.tsx              # Main application component  
-│   ├── index.tsx            # React entry point
-│   └── components/          # React components
-├── public/                  # Static assets
-├── scripts/                 # Database setup scripts
-│   ├── create_app_role.sql  # Application role creation
-│   └── setup_database.sql   # Database and schema setup
-└── snowflake/               # SPCS deployment files
-
-    ├── deploy.sql           # Service deployment (includes embedded spec)
-    └── manage_service.sql   # Service management commands
+na_analytics/
+├── package.json                        # Dependencies and scripts
+├── server.js                          # Express server with strategic APIs
+├── tsconfig.json                      # TypeScript configuration  
+├── Dockerfile                         # Multi-stage Docker build
+├── setup.sh                          # Complete database setup orchestration
+├── deploy.sh                         # End-to-end SPCS deployment
+├── src/                               # React application source
+│   ├── App.tsx                        # Main dashboard application
+│   ├── index.tsx                      # React entry point
+│   └── components/                    # Dashboard components
+│       └── Dashboard.tsx              # Enhanced analytics dashboard
+├── build/                             # Static dashboard files
+│   ├── dashboard.html                 # Executive dashboard interface
+│   └── chart.js                      # Local Chart.js for CSP compliance
+├── public/                            # Static assets
+├── scripts/                           # Database setup and data generation
+│   ├── create_app_role.sql           # Application role creation
+│   ├── setup_database.sql            # Schema and tables creation  
+│   ├── insert_sample_data.sql        # Basic sample data
+│   ├── expand_strategic_data.sql     # Scale to 50+ providers, 110+ apps
+│   ├── quick_scale_fix.sql           # Customer scale adjustment
+│   └── comprehensive_transactions.sql # Multi-month revenue generation
+└── snowflake/                         # SPCS deployment files
+    ├── deploy.sql                     # Service deployment with embedded spec
+    ├── setup_image_repo.sql          # Container registry setup
+    └── manage_service.sql             # Service management commands
 ```
 
 ## 🚀 Quick Start
 
-### 1. Create New Project
+### 1. Clone Repository
 
 ```bash
-# Copy template to new project
-cp -r spcs_template_cursor my-new-app
-cd my-new-app
-
-# Update project name in package.json
-# Update APP_NAME in deploy.sh
+git clone https://github.com/sfc-gh-ujagtap/na_analytics
+cd na_analytics
 ```
 
 ### 2. Install Dependencies
@@ -56,23 +68,34 @@ npm install --legacy-peer-deps
 ### 3. Local Development
 
 ```bash
-# Start React development server
-npm start
+# Start Express server with analytics dashboard
+node server.js
 
-# Or start Express server (serves built React app)
-npm run build
-npm run dev
+# Dashboard available at: http://localhost:3002
+# API endpoints: http://localhost:3002/api/*
 ```
 
-### 4. Test Docker Build
+### 4. Database Setup (Required for Live Data)
 
 ```bash
-# Build and test Docker image locally
-npm run docker:build
-npm run docker:run
+# Complete database setup with comprehensive analytics data
+./setup.sh
 
-# Test endpoints
-curl http://localhost:3002/api/health
+# Includes:
+# - 75 Providers across multiple industries and tiers
+# - 350+ Customers with realistic spend patterns  
+# - 90+ Apps with varied categories and performance
+# - 15,000+ Revenue transactions across multiple months
+```
+
+### 5. SPCS Deployment
+
+```bash
+# Single command deployment to Snowflake Container Services
+./deploy.sh
+
+# Check deployment status
+snowsql -q "SELECT SYSTEM\$GET_SERVICE_STATUS('NATIVE_APPS_ANALYTICS_SERVICE');"
 ```
 
 ## 🔧 Configuration
